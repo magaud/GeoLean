@@ -1,602 +1,617 @@
-Require Export GeoCoq.Axioms.tarski_axioms.
+import GeoLean.theories.Axioms.tarski_axioms
 
-Section Definitions.
+section Definitions
 
-Context `{Tn:Tarski_neutral_dimensionless}.
+variable {Tn:Tarski_neutral_dimensionless} --{TPoint:Type} {Bet:TPoint->TPoint->TPoint->Prop} {Cong:TPoint->TPoint->TPoint->TPoint->Prop}
+open Tarski_neutral_dimensionless
+/-- Definition 2.10. -/
 
-(** Definition 2.10. *)
-
-Definition OFSC A B C D A' B' C' D' :=
+def OFSC A B C D A' B' C' D' :=
   Bet A B C /\ Bet A' B' C' /\
   Cong A B A' B' /\ Cong B C B' C' /\
-  Cong A D A' D' /\ Cong B D B' D'.
+  Cong A D A' D' /\ Cong B D B' D'
 
-(** Definition 3.8. *)
+/-- Definition 3.8. -/
 
-Definition Bet_4 A1 A2 A3 A4 :=
-   Bet A1 A2 A3 /\ Bet A2 A3 A4 /\ Bet A1 A3 A4 /\ Bet A1 A2 A4.
+def Bet_4 A1 A2 A3 A4 :=
+   Bet A1 A2 A3 /\ Bet A2 A3 A4 /\ Bet A1 A3 A4 /\ Bet A1 A2 A4
 
-(** Definition 4.1. *)
+/-- Definition 4.1. -/
 
-Definition IFSC A B C D A' B' C' D' :=
+def IFSC A B C D A' B' C' D' :=
    Bet A B C /\ Bet A' B' C' /\
    Cong A C A' C' /\ Cong B C B' C' /\
-   Cong A D A' D' /\ Cong C D C' D'.
+   Cong A D A' D' /\ Cong C D C' D'
 
-(** Definition 4.4. *)
+/-- Definition 4.4. -/
 
-Definition Cong_3 A B C A' B' C' :=
-  Cong A B A' B' /\ Cong A C A' C' /\ Cong B C B' C'.
+def Cong_3 A B C A' B' C' :=
+  Cong A B A' B' /\ Cong A C A' C' /\ Cong B C B' C'
 
-Definition Cong_4 P1 P2 P3 P4 Q1 Q2 Q3 Q4 :=
+def Cong_4 P1 P2 P3 P4 Q1 Q2 Q3 Q4 :=
   Cong P1 P2 Q1 Q2 /\ Cong P1 P3 Q1 Q3 /\ Cong P1 P4 Q1 Q4 /\
-  Cong P2 P3 Q2 Q3 /\ Cong P2 P4 Q2 Q4 /\ Cong P3 P4 Q3 Q4.
+  Cong P2 P3 Q2 Q3 /\ Cong P2 P4 Q2 Q4 /\ Cong P3 P4 Q3 Q4
 
-Definition Cong_5 P1 P2 P3 P4 P5 Q1 Q2 Q3 Q4 Q5 :=
+def Cong_5 P1 P2 P3 P4 P5 Q1 Q2 Q3 Q4 Q5 :=
   Cong P1 P2 Q1 Q2 /\ Cong P1 P3 Q1 Q3 /\
   Cong P1 P4 Q1 Q4 /\ Cong P1 P5 Q1 Q5 /\
   Cong P2 P3 Q2 Q3 /\ Cong P2 P4 Q2 Q4 /\ Cong P2 P5 Q2 Q5 /\
-  Cong P3 P4 Q3 Q4 /\ Cong P3 P5 Q3 Q5 /\ Cong P4 P5 Q4 Q5.
+  Cong P3 P4 Q3 Q4 /\ Cong P3 P5 Q3 Q5 /\ Cong P4 P5 Q4 Q5
 
-(** Definition 4.10. *)
+/-- Definition 4.10. -/
 
-Definition Col A B C := Bet A B C \/ Bet B C A \/ Bet C A B.
+def Col A B C  := Bet A B C \/ Bet B C A \/ Bet C A B
 
-(** Definition 4.15. *)
+/-- Definition 4.15. -/
 
-Definition FSC A B C D A' B' C' D' :=
-  Col A B C /\ Cong_3 A B C A' B' C' /\ Cong A D A' D' /\ Cong B D B' D'.
+def FSC A B C D A' B' C' D' :=
+  Col A B C /\ Cong_3 A B C A' B' C' /\ Cong A D A' D' /\ Cong B D B' D'
 
-(** Definition 5.4. *)
+/-- Definition 5.4. -/
 
-Definition Le A B C D := exists E, Bet C E D /\ Cong A B C E.
+def Le A B C D := exists E, Bet C E D /\ Cong A B C E
 
-Definition Ge A B C D := Le C D A B.
+def Ge A B C D := Le C D A B
 
-(** Definition 5.14. *)
+/-- Definition 5.14. -/
 
-Definition Lt A B C D := Le A B C D /\ ~ Cong A B C D.
+def Lt A B C D := Le A B C D /\ ¬ Cong A B C D
 
-Definition Gt A B C D := Lt C D A B.
+def Gt A B C D := Lt C D A B
 
-(** Definition 6.1. *)
+/-- Definition 6.1. -/
 
-Definition Out P A B := A <> P /\ B <> P /\ (Bet P A B \/ Bet P B A).
+def Out P A B := A ≠ P /\ B ≠ P /\ (Bet P A B \/ Bet P B A)
 
-(** Definition 6.22. *)
+/-- Definition 6.22. -/
 
-Definition Inter A1 A2 B1 B2 X :=
- B1 <> B2 /\ (exists P, Col P B1 B2 /\ ~ Col P A1 A2) /\
- Col A1 A2 X /\ Col B1 B2 X.
+def Inter2 A1 A2 B1 B2 X :=  -- renamed because Inter already exists
+ B1 ≠ B2 /\ (exists P, Col P B1 B2 /\ ¬ Col P A1 A2) /\
+ Col A1 A2 X /\ Col B1 B2 X
 
-(** Definition 7.1. *)
+/-- Definition 7.1. -/
 
-Definition Midpoint M A B := Bet A M B /\ Cong A M M B.
+def Midpoint M A B := Bet A M B /\ Cong A M M B
 
-(** Definition 8.1. *)
+/-- Definition 8.1. -/
 
-Definition Per A B C := exists C', Midpoint B C C' /\ Cong A C A C'.
+def Per A B C := exists C', Midpoint B C C' /\ Cong A C A C'
 
-(** Definition 8.11. *)
+/-- Definition 8.11. -/
 
-Definition Perp_at X A B C D :=
-  A <> B /\ C <> D /\ Col X A B /\ Col X C D /\
-  forall U V, Col U A B -> Col V C D -> Per U X V.
+def Perp_at (X A B C D:Tpoint) :=
+  A ≠ B /\ C ≠ D /\ Col X A B /\ Col X C D /\
+  forall U V, Col U A B -> Col V C D -> Per U X V
 
-(** Definition 8.11. *)
+/-- Definition 8.11. -/
 
-Definition Perp A B C D := exists X, Perp_at X A B C D.
+def Perp (A B C D:Tpoint) := exists X, Perp_at X A B C D
 
-(** Definition 9.1. *)
+/-- Definition 9.1. -/
 
-Definition TS A B P Q :=
-  ~ Col P A B /\ ~ Col Q A B /\ exists T, Col T A B /\ Bet P T Q.
+def TS A B P Q :=
+  ¬ Col P A B /\ ¬ Col Q A B /\ exists T, Col T A B /\ Bet P T Q
 
-(** Definition 9.7. *)
+/-- Definition 9.7. -/
 
-Definition OS A B P Q := exists R, TS A B P R /\ TS A B Q R.
+def OS (A B P Q:Tpoint) := exists R, TS A B P R /\ TS A B Q R
 
-(** Satz 9.33. *)
+/-- Satz 9.33. -/
 
-Definition Coplanar A B C D :=
+def Coplanar A B C D :=
   exists X, (Col A B X /\ Col C D X) \/
             (Col A C X /\ Col B D X) \/
-            (Col A D X /\ Col B C X).
+            (Col A D X /\ Col B C X)
 
-(** Definition 9.37 *)
+/-- Definition 9.37 -/
 
-Definition TSP A B C P Q :=
-  ~ Coplanar A B C P /\ ~ Coplanar A B C Q /\ (exists T, Coplanar A B C T /\ Bet P T Q).
+def TSP A B C P Q :=
+  ¬ Coplanar A B C P /\ ¬ Coplanar A B C Q /\ (exists T, Coplanar A B C T /\ Bet P T Q)
 
-(** Definition 9.40 *)
+/-- Definition 9.40 -/
 
-Definition OSP A B C P Q :=
-  exists R, TSP A B C P R /\ TSP A B C Q R.
+def OSP (A B C P Q:Tpoint) :=
+  exists R, TSP A B C P R /\ TSP A B C Q R
 
-(** Definition 10.3. *)
+/-- Definition 10.3. -/
 
-Definition ReflectL P' P A B :=
-  (exists X, Midpoint X P P' /\ Col A B X) /\ (Perp A B P P' \/ P = P').
+def ReflectL P' P A B :=
+  (exists X, Midpoint X P P' /\ Col A B X) /\ (Perp A B P P' \/ P = P')
 
-Definition Reflect P' P A B :=
- (A <> B /\ ReflectL P' P A B) \/ (A = B /\ Midpoint A P P').
+def Reflect (P' P A B:Tpoint) :=
+ (A ≠ B /\ ReflectL P' P A B) \/ (A = B /\ Midpoint A P P')
 
-Definition ReflectL_at M P' P A B :=
-  (Midpoint M P P' /\ Col A B M) /\ (Perp A B P P' \/ P = P').
+def ReflectL_at (M P' P A B:Tpoint) :=
+  (Midpoint M P P' /\ Col A B M) /\ (Perp A B P P' \/ P = P')
 
-Definition Reflect_at M P' P A B :=
- (A <> B /\ ReflectL_at M P' P A B) \/ (A = B /\ A = M /\ Midpoint M P P').
+def Reflect_at (M P' P A B:Tpoint) :=
+ (A ≠ B /\ ReflectL_at M P' P A B) \/ (A = B /\ A = M /\ Midpoint M P P')
 
-(** Definition 11.2. *)
+/-- Definition 11.2. -/
 
-Definition CongA A B C D E F :=
-  A <> B /\ C <> B /\ D <> E /\ F <> E /\
+def CongA A B C D E F :=
+  A ≠ B /\ C ≠ B /\ D ≠ E /\ F ≠ E /\
   exists A', exists C', exists D', exists F',
   Bet B A A' /\ Cong A A' E D /\
   Bet B C C' /\ Cong C C' E F /\
   Bet E D D' /\ Cong D D' B A /\
   Bet E F F' /\ Cong F F' B C /\
-  Cong A' C' D' F'.
+  Cong A' C' D' F'
 
-(** Definition 11.23. *)
+/-- Definition 11.23. -/
 
-Definition InAngle P A B C :=
-  A <> B /\ C <> B /\ P <> B /\ exists X, Bet A X C /\ (X = B \/ Out B X P).
+def InAngle P A B C :=
+  A ≠ B /\ C ≠ B /\ P ≠ B /\ exists X, Bet A X C /\ (X = B \/ Out B X P)
 
-(** Definition 11.27. *)
+/-- Definition 11.27. -/
 
-Definition LeA A B C D E F := exists P, InAngle P D E F /\ CongA A B C D E P.
+def LeA A B C D E F := exists P, InAngle P D E F /\ CongA A B C D E P
 
-Definition GeA A B C D E F := LeA D E F A B C.
+def GeA A B C D E F := LeA D E F A B C
 
-(** Definition 11.38. *)
+/-- Definition 11.38. -/
 
-Definition LtA A B C D E F := LeA A B C D E F /\ ~ CongA A B C D E F.
+def LtA (A B C D E F:Tpoint) := LeA A B C D E F /\ ¬ CongA A B C D E F
 
-Definition GtA A B C D E F := LtA D E F A B C.
+def GtA A B C D E F := LtA D E F A B C
 
-(** Definition 11.39. *)
+/-- Definition 11.39. -/
 
-Definition Acute A B C :=
-  exists A' B' C', Per A' B' C' /\ LtA A B C A' B' C'.
+def Acute (A B C:Tpoint) :=
+  exists A' B' C', Per A' B' C' /\ LtA A B C A' B' C'
 
-(** Definition 11.39. *)
+/-- Definition 11.39. -/
 
-Definition Obtuse A B C :=
-  exists A' B' C', Per A' B' C' /\ LtA A' B' C' A B C.
+def Obtuse (A B C:Tpoint) :=
+  exists A' B' C', Per A' B' C' /\ LtA A' B' C' A B C
 
-(** Definition 11.59. *)
+/-- Definition 11.59. -/
 
-Definition Orth_at X A B C U V :=
-  ~ Col A B C /\ U <> V /\ Coplanar A B C X /\ Col U V X /\
-  forall P Q, Coplanar A B C P -> Col U V Q -> Per P X Q.
+def Orth_at X A B C U V :=
+  ¬ Col A B C /\ U ≠ V /\ Coplanar A B C X /\ Col U V X /\
+  forall P Q, Coplanar A B C P -> Col U V Q -> Per P X Q
 
-Definition Orth A B C U V := exists X, Orth_at X A B C U V.
+def Orth (A B C U V:Tpoint) := exists X, Orth_at X A B C U V
 
-(** Definition 12.2. *)
+/-- Definition 12.2. -/
 
-Definition Par_strict A B C D :=
-  Coplanar A B C D /\ ~ exists X, Col X A B /\ Col X C D.
+def Par_strict (A B C D:Tpoint) :=
+  Coplanar A B C D /\  ¬exists X, Col X A B /\ Col X C D
 
-(** Definition 12.3. *)
+/-- Definition 12.3. -/
 
-Definition Par A B C D :=
-  Par_strict A B C D \/ (A <> B /\ C <> D /\ Col A C D /\ Col B C D).
+def Par (A B C D:Tpoint) :=
+  Par_strict A B C D \/ (A ≠ B /\ C ≠ D /\ Col A C D /\ Col B C D)
 
-(** Definition 13.4. *)
+/-- Definition 13.4. -/
 
-Definition Q_Cong l := exists A B, forall X Y, Cong A B X Y <-> l X Y.
+def Q_Cong (l: Tpoint -> Tpoint -> Prop) := exists A B, forall (X Y:Tpoint), Cong A B X Y <-> l X Y
 
-Definition Len A B l := Q_Cong l /\ l A B.
+def Len (A B:Tpoint) l := Q_Cong l /\ l A B
 
-Definition Q_Cong_Null l := Q_Cong l /\ exists A, l A A.
+def Q_Cong_Null (l:Tpoint -> Tpoint -> Prop) := Q_Cong l /\ exists A, l A A
 
-Definition EqL (l1 l2 : Tpoint -> Tpoint -> Prop) :=
-  forall A B, l1 A B <-> l2 A B.
+def EqL (l1 l2 : Tpoint -> Tpoint -> Prop) :=
+  forall A B, l1 A B <-> l2 A B
 
-Definition Q_CongA a :=
+def Q_CongA (a: Tpoint -> Tpoint -> Tpoint -> Prop):=
   exists A B C,
-    A <> B /\ C <> B /\ forall X Y Z, CongA A B C X Y Z <-> a X Y Z.
+    A ≠ B /\ C ≠ B /\ forall X Y Z, CongA A B C X Y Z <-> a X Y Z
 
-Definition Ang A B C a := Q_CongA a /\ a A B C.
+def Ang A B C a := Q_CongA a /\ a A B C
 
-Definition Ang_Flat a := Q_CongA a /\ forall A B C, a A B C -> Bet A B C.
+def Ang_Flat a := Q_CongA a /\ forall A B C, a A B C -> Bet A B C
 
-Definition EqA (a1 a2 : Tpoint -> Tpoint -> Tpoint -> Prop) :=
-  forall A B C, a1 A B C <-> a2 A B C.
+def EqA (a1 a2 : Tpoint -> Tpoint -> Tpoint -> Prop) :=
+  forall A B C, a1 A B C <-> a2 A B C
 
-(** Definition 13.9. *)
+/-- Definition 13.9. -/
 
-Definition Perp2 A B C D P :=
-  exists X Y, Col P X Y /\ Perp X Y A B /\ Perp X Y C D.
+def Perp2 A B C D P :=
+  exists X Y, Col P X Y /\ Perp X Y A B /\ Perp X Y C D
 
-Definition Q_CongA_Acute a :=
+def Q_CongA_Acute (a:Tpoint -> Tpoint -> Tpoint -> Prop) :=
   exists A B C,
-    Acute A B C /\ forall X Y Z, CongA A B C X Y Z <-> a X Y Z.
+    Acute A B C /\ forall X Y Z, CongA A B C X Y Z <-> a X Y Z
 
-Definition Ang_Acute A B C a := Q_CongA_Acute a /\ a A B C.
+def Ang_Acute A B C (a:Tpoint -> Tpoint -> Tpoint -> Prop) := Q_CongA_Acute a /\ a A B C
 
-Definition Q_CongA_nNull a := Q_CongA a /\ forall A B C, a A B C -> ~ Out B A C.
+def Q_CongA_nNull (a:Tpoint -> Tpoint -> Tpoint -> Prop) := Q_CongA a /\ forall A B C, a A B C -> ¬ Out B A C
 
-Definition Q_CongA_nFlat a := Q_CongA a /\ forall A B C, a A B C -> ~ Bet A B C.
+def Q_CongA_nFlat (a:Tpoint -> Tpoint -> Tpoint -> Prop) := Q_CongA a /\ forall A B C, a A B C -> ¬ Bet A B C
 
-Definition Q_CongA_Null a := Q_CongA a /\ forall A B C, a A B C -> Out B A C.
+def Q_CongA_Null (a:Tpoint -> Tpoint -> Tpoint -> Prop) := Q_CongA a /\ forall A B C, a A B C -> Out B A C
 
-Definition Q_CongA_Null_Acute a :=
-  Q_CongA_Acute a /\ forall A B C, a A B C -> Out B A C.
+def Q_CongA_Null_Acute (a:Tpoint -> Tpoint -> Tpoint -> Prop) :=
+  Q_CongA_Acute a /\ forall A B C, a A B C -> Out B A C
 
-Definition is_null_anga' a :=
-  Q_CongA_Acute a /\ exists A B C, a A B C /\ Out B A C.
+def is_null_anga' (a:Tpoint -> Tpoint -> Tpoint -> Prop) :=
+  Q_CongA_Acute a /\ exists A B C, a A B C /\ Out B A C
 
-Definition Q_CongA_nNull_Acute a :=
-  Q_CongA_Acute a /\ forall A B C, a A B C -> ~ Out B A C.
+def Q_CongA_nNull_Acute (a:Tpoint -> Tpoint -> Tpoint -> Prop) :=
+  Q_CongA_Acute a /\ forall A B C, a A B C ->  ¬ Out B A C
 
-Definition Lcos lb lc a :=
+def Lcos lb lc a :=
   Q_Cong lb /\ Q_Cong lc /\ Q_CongA_Acute a /\
-  (exists A B C, (Per C B A /\ lb A B /\ lc A C /\ a B A C)).
+  (exists A B C, (Per C B A /\ lb A B /\ lc A C /\ a B A C))
 
-Definition Eq_Lcos la a lb b := exists lp, Lcos lp la a /\ Lcos lp lb b.
+def Eq_Lcos (la:Tpoint -> Tpoint -> Prop)
+            (a:Tpoint -> Tpoint -> Tpoint -> Prop)
+            (lb:Tpoint -> Tpoint -> Prop)
+            (b:Tpoint -> Tpoint -> Tpoint -> Prop) := exists lp, Lcos lp la a /\ Lcos lp lb b
 
-Definition Lcos2 lp l a b := exists la, Lcos la l a /\ Lcos lp la b.
+def Lcos2 lp l a b := exists la, Lcos la l a /\ Lcos lp la b
 
-Definition Eq_Lcos2 l1 a b l2 c d :=
-  exists lp, Lcos2 lp l1 a b /\ Lcos2 lp l2 c d.
+def Eq_Lcos2 (l1:Tpoint -> Tpoint -> Prop)
+       (a:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (b:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (l2:Tpoint -> Tpoint -> Prop)
+       (c:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (d:Tpoint -> Tpoint -> Tpoint -> Prop) :=
+  exists lp, Lcos2 lp l1 a b /\ Lcos2 lp l2 c d
 
-Definition Lcos3 lp l a b c :=
-  exists la lab, Lcos la l a /\ Lcos lab la b /\ Lcos lp lab c.
+def Lcos3 lp l a b c :=
+  exists la lab, Lcos la l a /\ Lcos lab la b /\ Lcos lp lab c
 
-Definition Eq_Lcos3 l1 a b c l2 d e f :=
-  exists lp, Lcos3 lp l1 a b c /\ Lcos3 lp l2 d e f.
+def Eq_Lcos3 (l1:Tpoint -> Tpoint -> Prop)
+       (a:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (b:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (c:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (l2:Tpoint -> Tpoint -> Prop)
+       (d:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (e:Tpoint -> Tpoint -> Tpoint -> Prop)
+       (f:Tpoint -> Tpoint -> Tpoint -> Prop) :=
+  exists lp, Lcos3 lp l1 a b c /\ Lcos3 lp l2 d e f
 
-(** Definition 14.1. *)
+/-- Definition 14.1. -/
 
-Definition Ar1 O E A B C :=
- O <> E /\ Col O E A /\ Col O E B /\ Col O E C.
+def Ar1 (O E A B C:Tpoint) :=
+ O ≠ E /\ Col O E A /\ Col O E B /\ Col O E C
 
-Definition Ar2 O E E' A B C :=
- ~ Col O E E' /\ Col O E A /\ Col O E B /\ Col O E C.
+def Ar2 (O E E' A B C:Tpoint) :=
+ ¬ Col O E E' /\ Col O E A /\ Col O E B /\ Col O E C
 
-(** Definition 14.2. *)
+/-- Definition 14.2. -/
 
-Definition Pj A B C D := Par A B C D \/ C = D.
+def Pj (A B C D:Tpoint) := Par A B C D \/ C = D
 
-(** Definition 14.3. *)
+/-- Definition 14.3. -/
 
-Definition Sum O E E' A B C :=
+def SumGeoLean (O E E' A B C:Tpoint) :=  -- was Sum
  Ar2 O E E' A B C /\
  exists A' C',
  Pj E E' A  A' /\ Col O E' A' /\
  Pj O E  A' C' /\
  Pj O E' B  C' /\
- Pj E' E C' C.
+ Pj E' E C' C
 
-Definition Proj P Q A B X Y :=
-  A <> B /\ X <> Y /\ ~Par A B X Y  /\ Col A B Q /\ (Par P Q X Y \/ P = Q).
+def Proj P Q A B X Y :=
+  A ≠ B /\ X ≠ Y /\ ¬ Par A B X Y  /\ Col A B Q /\ (Par P Q X Y \/ P = Q)
 
-Definition Sump O E E' A B C :=
+def Sump (O E E' A B C:Tpoint) :=
  Col O E A /\ Col O E B /\
  exists A' C' P',
    Proj A A' O E' E E' /\
    Par O E A' P' /\
    Proj B C' A' P' O E' /\
-   Proj C' C O E E E'.
+   Proj C' C O E E E'
 
-(** Definition 14.4. *)
+/-- Definition 14.4. -/
 
-Definition Prod O E E' A B C :=
+def ProdGeoLean (O E E' A B C: Tpoint) := -- was Prod
  Ar2 O E E' A B C /\
- exists B', Pj E E' B B' /\ Col O E' B' /\ Pj E' A B' C.
+ exists B', Pj E E' B B' /\ Col O E' B' /\ Pj E' A B' C
 
-Definition Prodp O E E' A B C :=
+def Prodp (O E E' A B C:Tpoint) :=
  Col O E A /\ Col O E B /\
- exists B', Proj B B' O E' E E' /\ Proj B' C O E A E'.
+ exists B', Proj B B' O E' E E' /\ Proj B' C O E A E'
 
-(** Definition 14.8. *)
+/-- Definition 14.8. -/
 
-Definition Opp O E E' A B :=
- Sum O E E' B A O.
+def Opp (O E E' A B:Tpoint) :=
+ SumGeoLean O E E' B A O
 
-(** Definition 14.38. *)
+/-- Definition 14.38. -/
 
-Definition Diff O E E' A B C :=
-  exists B', Opp O E E' B B' /\ Sum O E E' A B' C.
+def Diff (O E E' A B C:Tpoint) :=
+  exists B', Opp O E E' B B' /\ SumGeoLean O E E' A B' C
 
-Definition sum3 O E E' A B C S :=
-  exists AB, Sum O E E' A B AB /\ Sum O E E' AB C S.
+def sum3 (O E E' A B C S:Tpoint) :=
+  exists AB, SumGeoLean O E E' A B AB /\ SumGeoLean O E E' AB C S
 
-Definition Sum4 O E E' A B C D S :=
-  exists ABC, sum3 O E E' A B C ABC /\ Sum O E E' ABC D S.
+def Sum4 (O E E' A B C D S: Tpoint) :=
+  exists ABC, sum3 O E E' A B C ABC /\ SumGeoLean O E E' ABC D S
 
-Definition sum22 O E E' A B C D S :=
-  exists AB CD, Sum O E E' A B AB /\ Sum O E E' C D CD /\ Sum O E E' AB CD S.
+def sum22 (O E E' A B C D S:Tpoint) :=
+  exists AB CD, SumGeoLean O E E' A B AB /\ SumGeoLean O E E' C D CD /\ SumGeoLean O E E' AB CD S
 
-Definition Ar2_4 O E E' A B C D :=
-  ~ Col O E E' /\ Col O E A /\ Col O E B /\ Col O E C /\ Col O E D.
+def Ar2_4 (O E E' A B C D:Tpoint) :=
+  ¬ Col O E E' /\ Col O E A /\ Col O E B /\ Col O E C /\ Col O E D
 
-(** Definition 14.34. *)
+/-- Definition 14.34. -/
 
-Definition Ps O E A := Out O A E.
+def Ps (O E A:Tpoint) := Out O A E
 
-Definition Ng O E A := A <> O /\ E <> O /\ Bet A O E .
+def Ng O E A := A ≠ O /\ E ≠ O /\ Bet A O E
 
-(** Definition 14.38. *)
+/-- Definition 14.38. -/
 
-Definition LtP O E E' A B := exists D, Diff O E E' B A D /\ Ps O E D.
+def LtP (O E E' A B:Tpoint) := exists D, Diff O E E' B A D /\ Ps O E D
 
-Definition LeP O E E' A B := LtP O E E' A B \/ A = B.
+def LeP (O E E' A B:Tpoint) := LtP O E E' A B \/ A = B
 
-Definition Length O E E' A B L :=
- O <> E /\ Col O E L /\ LeP O E E' O L /\ Cong O L A B.
+def Length O E E' A B L :=
+ O ≠ E /\ Col O E L /\ LeP O E E' O L /\ Cong O L A B
 
-(** Definition 15.1. *)
+/-- Definition 15.1. -/
 
-Definition Is_length O E E' A B L :=
- Length O E E' A B L \/ (O = E /\ O = L).
+def Is_length (O E E' A B L:Tpoint) :=
+ Length O E E' A B L \/ (O = E /\ O = L)
 
-Definition Sumg O E E' A B C :=
-  Sum O E E' A B C \/ (~ Ar2 O E E' A B B /\ C = O).
+def Sumg (O E E' A B C:Tpoint) :=
+  SumGeoLean O E E' A B C \/ (¬ Ar2 O E E' A B B /\ C = O)
 
-Definition Prodg O E E' A B C :=
-  Prod O E E' A B C \/ (~ Ar2 O E E' A B B /\ C = O).
+def Prodg (O E E' A B C: Tpoint) :=
+  ProdGeoLean O E E' A B C \/ (¬ Ar2 O E E' A B B /\ C = O)
 
-Definition PythRel O E E' A B C :=
+def PythRel (O E E' A B C: Tpoint) :=
   Ar2 O E E' A B C /\
   ((O = B /\ (A = C \/ Opp O E E' A C)) \/
-   exists B', Perp O B' O B /\ Cong O B' O B /\ Cong O C A B').
+   exists B', Perp O B' O B /\ Cong O B' O B /\ Cong O C A B')
 
-Definition SignEq O E A B := Ps O E A /\ Ps O E B \/ Ng O E A /\ Ng O E B.
+def SignEq (O E A B: Tpoint) := Ps O E A /\ Ps O E B \/ Ng O E A /\ Ng O E B
 
-Definition LtPs O E E' A B := exists D, Ps O E D /\ Sum O E E' A D B.
+def LtPs (O E E' A B: Tpoint) := exists D, Ps O E D /\ SumGeoLean O E E' A D B
 
-(** Definition 16.1. *)
-(** We skip the case of dimension 1. *)
+/-- Definition 16.1. -/
+/- We skip the case of dimension 1. -/
 
-Definition Cs O E S U1 U2 :=
-   O <> E /\ Cong O E S U1 /\ Cong O E S U2 /\ Per U1 S U2.
+def Cs O E S U1 U2 :=
+   O ≠ E /\ Cong O E S U1 /\ Cong O E S U2 /\ Per U1 S U2
 
 
-(** Q is the orthogonal projection of P on the line AB. *)
+/-- Q is the orthogonal projection of P on the line AB. -/
 
-Definition Projp P Q A B :=
-  A <> B /\ ((Col A B Q /\ Perp A B P Q) \/ (Col A B P /\ P = Q)).
+def Projp P Q A B :=
+  A ≠ B /\ ((Col A B Q /\ Perp A B P Q) \/ (Col A B P /\ P = Q))
 
-(** Definition 16.5. *)
-(** P is of coordinates (X,Y) in the grid SU1U2 using unit length OE. *)
+/-- Definition 16.5. -/
+/- P is of coordinates (X,Y) in the grid SU1U2 using unit length OE. -/
 
-Definition Cd O E S U1 U2 P X Y :=
+def Cd O E S U1 U2 P X Y :=
   Cs O E S U1 U2 /\ Coplanar P S U1 U2 /\
   (exists PX, Projp P PX S U1 /\ Cong_3 O E X S U1 PX) /\
-  (exists PY, Projp P PY S U2 /\ Cong_3 O E Y S U2 PY).
+  (exists PY, Projp P PY S U2 /\ Cong_3 O E Y S U2 PY)
 
 
-(** Strict betweenness *)
+/-- Strict betweenness -/
 
-Definition BetS A B C : Prop := Bet A B C /\ A <> B /\ B <> C.
+def BetS (A B C:Tpoint) : Prop := Bet A B C /\ A ≠ B /\ B ≠ C
 
-(** Definition of the sum of segments.
-    SumS A B C D E F means that AB + CD = EF. *)
+/-- Definition of the sum of segments.
+    SumS A B C D E F means that AB + CD = EF. -/
 
-Definition SumS A B C D E F := exists P Q R,
-  Bet P Q R /\ Cong P Q A B /\ Cong Q R C D /\ Cong P R E F.
+def SumS A B C D E F := exists P Q R,
+  Bet P Q R /\ Cong P Q A B /\ Cong Q R C D /\ Cong P R E F
 
-(** PQ is the perpendicular bisector of segment AB *)
+/-- PQ is the perpendicular bisector of segment AB -/
 
-Definition Perp_bisect P Q A B := ReflectL A B P Q /\ A <> B.
+def Perp_bisect P Q A B := ReflectL A B P Q /\ A ≠ B
 
-Definition Perp_bisect_bis P Q A B :=
-  exists I, Perp_at I P Q A B /\ Midpoint I A B.
+def Perp_bisect_bis (P Q A B:Tpoint) :=
+  exists I, Perp_at I P Q A B /\ Midpoint I A B
 
-Definition Is_on_perp_bisect P A B := Cong A P P B.
+def Is_on_perp_bisect P A B := Cong A P P B
 
-(** Definition of the sum of angles.
-    SumA A B C D E F G H I means that ABC + DEF = GHI. *)
+/-- Definition of the sum of angles.
+    SumA A B C D E F G H I means that ABC + DEF = GHI. -/
 
-Definition SumA A B C D E F G H I :=
-  exists J, CongA C B J D E F /\ ~ OS B C A J /\ Coplanar A B C J /\ CongA A B J G H I.
+def SumA A B C D E F G H I :=
+  exists J, CongA C B J D E F /\ ¬ OS B C A J /\ Coplanar A B C J /\ CongA A B J G H I
 
-(** The SAMS predicate describes the fact that the sum of the two angles is "at most straight" *)
+/-- The SAMS predicate describes the fact that the sum of the two angles is "at most straight" -/
 
-Definition SAMS A B C D E F :=
-  A <> B /\ (Out E D F \/ ~ Bet A B C) /\
-  exists J, CongA C B J D E F /\ ~ OS B C A J /\ ~ TS A B C J /\ Coplanar A B C J.
+def SAMS A B C D E F :=
+  A ≠ B /\ (Out E D F \/ ¬ Bet A B C) /\
+  exists J, CongA C B J D E F /\ ¬ OS B C A J /\ ¬ TS A B C J /\ Coplanar A B C J
 
-(** Supplementary angles *)
+/-- Supplementary angles -/
 
-Definition SuppA A B C D E F :=
-  A <> B /\ exists A', Bet A B A' /\ CongA D E F C B A'.
+def SuppA A B C D E F :=
+  A ≠ B /\ exists A', Bet A B A' /\ CongA D E F C B A'
 
-(** Definition of the sum of the interior angles of a triangle.
+/-- Definition of the sum of the interior angles of a triangle.
     TriSumA A B C D E F means that the sum of the angles of the triangle ABC
-    is equal to the angle DEF *)
+    is equal to the angle DEF -/
 
-Definition TriSumA A B C D E F :=
-  exists G H I, SumA A B C B C A G H I /\ SumA G H I C A B D E F.
+def TriSumA (A B C D E F:Tpoint) :=
+  exists G H I, SumA A B C B C A G H I /\ SumA G H I C A B D E F
 
-(** The difference between a straight angle and the sum of the angles of the triangle ABC.
-    It is a non-oriented angle, so we can't discriminate between positive and negative difference *)
+/-- The difference between a straight angle and the sum of the angles of the triangle ABC.
+    It is a non-oriented angle, so we can't discriminate between positive and negative difference -/
 
-Definition Defect A B C D E F := exists G H I,
-  TriSumA A B C G H I /\ SuppA G H I D E F.
+def Defect (A B C D E F:Tpoint) := exists G H I,
+  TriSumA A B C G H I /\ SuppA G H I D E F
 
-(** P is on the circle of center A going through B *)
+/-- P is on the circle of center A going through B -/
 
-Definition OnCircle P A B := Cong A P A B.
+def OnCircle P A B := Cong A P A B
 
-(** P is inside or on the circle of center A going through B *)
 
-Definition InCircle P A B := Le A P A B.
+/-- P is inside or on the circle of center A going through B -/
 
-(** P is outside or on the circle of center A going through B *)
+def InCircle P A B := Le A P A B
 
-Definition OutCircle P A B := Le A B A P.
+/-- P is outside or on the circle of center A going through B -/
 
-(** P is strictly inside the circle of center A going through B *)
+def OutCircle P A B := Le A B A P
 
-Definition InCircleS P A B := Lt A P A B.
+/-- P is strictly inside the circle of center A going through B -/
 
-(** P is strictly outside the circle of center A going through B *)
+def InCircleS P A B := Lt A P A B
 
-Definition OutCircleS P A B := Lt A B A P.
+/-- P is strictly outside the circle of center A going through B -/
 
-(** The line segment AB is a diameter of the circle of center O going through P *)
+def OutCircleS P A B := Lt A B A P
 
-Definition Diam A B O P := Bet A O B /\ OnCircle A O P /\ OnCircle B O P.
+/-- The line segment AB is a diameter of the circle of center O going through P -/
 
-Definition EqC A B C D :=
- forall X, OnCircle X A B <-> OnCircle X C D.
+def Diam A B O P := Bet A O B /\ OnCircle A O P /\ OnCircle B O P
 
-(** The circles of center A passing through B and
+def EqC (A B C D:Tpoint) :=
+ forall X, OnCircle X A B <-> OnCircle X C D
+
+/-- The circles of center A passing through B and
                 of center C passing through D intersect
-                in two distinct points P and Q. *)
+                in two distinct points P and Q. -/
 
-Definition InterCCAt A B C D P Q :=
-  ~ EqC A B C D /\
-  P<>Q /\ OnCircle P C D /\ OnCircle Q C D /\ OnCircle P A B /\ OnCircle Q A B.
+def InterCCAt A B C D P Q :=
+  ¬ EqC A B C D /\
+  P ≠ Q /\ OnCircle P C D /\ OnCircle Q C D /\ OnCircle P A B /\ OnCircle Q A B
 
 
-(** The circles of center A passing through B and
+/-- The circles of center A passing through B and
                 of center C passing through D
-                have two distinct intersections. *)
+                have two distinct intersections. -/
 
-Definition InterCC A B C D :=
- exists P Q, InterCCAt A B C D P Q.
+def InterCC (A B C D:Tpoint) :=
+ exists P Q, InterCCAt A B C D P Q
 
-(** The circles of center A passing through B and
+/-- The circles of center A passing through B and
                 of center C passing through D
-                are tangent. *)
+                are tangent. -/
 
-Definition TangentCC A B C D := exists !X, OnCircle X A B /\ OnCircle X C D.
+--def TangentCC A B C D := ∃! X:Tpoint, OnCircle X A B /\ OnCircle X C D
 
-(** The line AB is tangent to the circle OP *)
+/- The line AB is tangent to the circle OP -/
 
-Definition Tangent A B O P := exists !X, Col A B X /\ OnCircle X O P.
+--def Tangent (A B O P:Tpoint) := exists !X, Col A B X /\ OnCircle X O P
 
-Definition TangentAt A B O P T :=
-  Tangent A B O P /\ Col A B T /\ OnCircle T O P.
+--def TangentAt A B O P T := Tangent A B O P /\ Col A B T /\ OnCircle T O P
 
-(** The points A, B, C and D belong to a same circle *)
+/- The points A, B, C and D belong to a same circle -/
 
-Definition Concyclic A B C D := Coplanar A B C D /\
-  exists O P, OnCircle A O P /\ OnCircle B O P /\ OnCircle C O P /\ OnCircle D O P.
+def Concyclic (A B C D:Tpoint) := Coplanar A B C D /\
+  exists O P, OnCircle A O P /\ OnCircle B O P /\ OnCircle C O P /\ OnCircle D O P
 
-(** The points A, B, C and D are concyclic or lined up *)
+/-- The points A, B, C and D are concyclic or lined up -/
 
-Definition Concyclic_gen A B C D :=
-  Concyclic A B C D \/ (Col A B C /\ Col A B D /\ Col A C D /\ Col B C D).
+def Concyclic_gen (A B C D:Tpoint) :=
+  Concyclic A B C D \/ (Col A B C /\ Col A B D /\ Col A C D /\ Col B C D)
 
-(** C is on the graduation based on [AB] *)
-Inductive Grad : Tpoint -> Tpoint -> Tpoint -> Prop :=
+/-- C is on the graduation based on [AB] -/
+inductive Grad : Tpoint -> Tpoint -> Tpoint -> Prop where
   | grad_init : forall A B, Grad A B B
   | grad_stab : forall A B C C',
                   Grad A B C ->
                   Bet A C C' -> Cong A B C C' ->
-                  Grad A B C'.
+                  Grad A B C'
 
-Definition Reach A B C D := exists B', Grad A B B' /\ Le C D A B'.
+def Reach A B C D := exists B', Grad A B B' /\ Le C D A B'
 
-(** There exists n such that AC = n times AB and DF = n times DE *)
-Inductive Grad2 : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
-                  Prop :=
+/-- There exists n such that AC = n times AB and DF = n times DE -/
+inductive Grad2 : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
+                  Prop where
   | grad2_init : forall A B D E, Grad2 A B B D E E
   | grad2_stab : forall A B C C' D E F F',
                    Grad2 A B C D E F ->
                    Bet A C C' -> Cong A B C C' ->
                    Bet D F F' -> Cong D E F F' ->
-                   Grad2 A B C' D E F'.
+                   Grad2 A B C' D E F'
 
-(** Graduation based on the powers of 2 *)
-Inductive GradExp : Tpoint -> Tpoint -> Tpoint -> Prop :=
+/-- Graduation based on the powers of 2 -/
+inductive GradExp : Tpoint -> Tpoint -> Tpoint -> Prop where
   | gradexp_init : forall A B, GradExp A B B
   | gradexp_stab : forall A B C C',
                      GradExp A B C ->
                      Bet A C C' -> Cong A C C C' ->
-                     GradExp A B C'.
+                     GradExp A B C'
 
-Inductive GradExp2 : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
-                     Prop :=
+inductive GradExp2 : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
+                     Prop where
   | gradexp2_init : forall A B D E, GradExp2 A B B D E E
   | gradexp2_stab : forall A B C C' D E F F',
                       GradExp2 A B C D E F ->
                       Bet A C C' -> Cong A C C C' ->
                       Bet D F F' -> Cong D F F F' ->
-                      GradExp2 A B C' D E F'.
+                      GradExp2 A B C' D E F'
 
-(** There exists n such that the angle DEF is congruent to n times the angle ABC *)
-Inductive GradA : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
-                  Prop :=
+/-- There exists n such that the angle DEF is congruent to n times the angle ABC -/
+inductive GradA : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
+                  Prop where
   | grada_init : forall A B C D E F, CongA A B C D E F -> GradA A B C D E F
   | grada_stab : forall A B C D E F G H I,
                    GradA A B C D E F ->
                    SAMS D E F A B C -> SumA D E F A B C G H I ->
-                   GradA A B C G H I.
+                   GradA A B C G H I
 
-(** There exists n such that the angle DEF is congruent to 2^n times the angle ABC *)
-Inductive GradAExp : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
-                     Prop :=
+/-- There exists n such that the angle DEF is congruent to 2^n times the angle ABC -/
+inductive GradAExp : Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint -> Tpoint ->
+                     Prop where
   | gradaexp_init : forall A B C D E F, CongA A B C D E F -> GradAExp A B C D E F
   | gradaexp_stab : forall A B C D E F G H I,
                       GradAExp A B C D E F ->
                       SAMS D E F D E F -> SumA D E F D E F G H I ->
-                      GradAExp A B C G H I.
+                      GradAExp A B C G H I
 
-(** Parallelogram *)
+/-- Parallelogram -/
 
-Definition Parallelogram_strict A B A' B' :=
-  TS A A' B B' /\ Par A B A' B' /\ Cong A B A' B'.
+def Parallelogram_strict A B A' B' :=
+  TS A A' B B' /\ Par A B A' B' /\ Cong A B A' B'
 
-Definition Parallelogram_flat A B A' B' :=
+def Parallelogram_flat A B A' B' :=
   Col A B A' /\ Col A B B' /\
   Cong A B A' B' /\ Cong A B' A' B /\
-  (A <> A' \/ B <> B').
+  (A ≠ A' \/ B ≠ B')
 
-Definition Parallelogram A B A' B' :=
-  Parallelogram_strict A B A' B' \/ Parallelogram_flat A B A' B'.
+def Parallelogram (A B A' B':Tpoint) :=
+  Parallelogram_strict A B A' B' \/ Parallelogram_flat A B A' B'
 
-Definition Plg A B C D :=
-  (A <> C \/ B <> D) /\ exists M, Midpoint M A C /\ Midpoint M B D.
+def Plg (A B C D:Tpoint) :=
+  (A ≠ C \/ B ≠ D) /\ exists M, Midpoint M A C /\ Midpoint M B D
 
-(** Rhombus *)
+/-- Rhombus -/
 
-Definition Rhombus A B C D := Plg A B C D /\ Cong A B B C.
+def Rhombus A B C D := Plg A B C D /\ Cong A B B C
 
-(** Rectangle *)
+/-- Rectangle -/
 
-Definition Rectangle A B C D := Plg A B C D /\ Cong A C B D.
+def Rectangle A B C D := Plg A B C D /\ Cong A C B D
 
-(** Square *)
+/-- Square -/
 
-Definition Square A B C D := Rectangle A B C D /\ Cong A B B C.
+def Square A B C D := Rectangle A B C D /\ Cong A B B C
 
-(** Kite *)
+/-- Kite -/
 
-Definition Kite A B C D := Cong B C C D /\ Cong D A A B.
+def Kite A B C D := Cong B C C D /\ Cong D A A B
 
-(** Saccheri *)
+/-- Saccheri -/
 
-Definition Saccheri A B C D :=
-  Per B A D /\ Per A D C /\ Cong A B C D /\ OS A D B C.
+def Saccheri A B C D :=
+  Per B A D /\ Per A D C /\ Cong A B C D /\ OS A D B C
 
-(** Lambert *)
+/-- Lambert -/
 
-Definition Lambert A B C D :=
-  A <> B /\ B <> C /\ C <> D /\ A <> D /\ Per B A D /\ Per A D C /\ Per A B C /\ Coplanar A B C D.
+def Lambert (A B C D:Tpoint) :=
+  A ≠ B /\ B ≠ C /\ C ≠ D /\ A ≠ D /\ Per B A D /\ Per A D C /\ Per A B C /\ Coplanar A B C D
 
-(** Vector *)
+/-- Vector -/
 
-Definition EqV A B C D := Parallelogram A B D C \/ A = B /\ C = D.
+def EqV (A B C D:Tpoint) := Parallelogram A B D C \/ A = B /\ C = D
 
-Definition SumV A B C D E F := forall D', EqV C D B D' -> EqV A D' E F.
+def SumV A B C D E F := forall D', EqV C D B D' -> EqV A D' E F
 
-Definition SumV_exists A B C D E F := exists D', EqV B D' C D /\ EqV A D' E F.
+def SumV_exists A B C D E F := exists D', EqV B D' C D /\ EqV A D' E F
 
-Definition Same_dir A B C D :=
-  A = B /\ C = D \/ exists D', Out C D D' /\ EqV A B C D'.
+def Same_dir A B C D :=
+  A = B /\ C = D \/ exists D', Out C D D' /\ EqV A B C D'
 
-Definition Opp_dir A B C D := Same_dir A B D C.
+def Opp_dir (A B C D:Tpoint) := Same_dir A B D C
 
-(** Projections *)
+/-- Projections -/
 
-Definition CongA_3 A B C A' B' C' :=
-  CongA A B C A' B' C' /\ CongA B C A B' C' A' /\ CongA C A B C' A' B'.
+def CongA_3 (A B C A' B' C':Tpoint) :=
+  CongA A B C A' B' C' /\ CongA B C A B' C' A' /\ CongA C A B C' A' B'
 
-End Definitions.
+end Definitions

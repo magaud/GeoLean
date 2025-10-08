@@ -7,3 +7,9 @@ import GeoLean.theories.Axioms.makarios_variant_axioms
 import GeoLean.theories.Axioms.gupta_inspired_variant_axioms
 import GeoLean.theories.Coinc.Utils.general_tactics
 import GeoLean.theories.Axioms.tarski_axioms
+import GeoLean.theories.Axioms.Definitions
+import GeoLean.theories.Axioms.parallel_postulates
+import GeoLean.theories.Axioms.continuity_axioms
+import GeoLean.theories.Axioms.finish
+import GeoLean.theories.Axioms.euclidean_axioms
+import GeoLean.theories.Axioms.hilbert_axioms
