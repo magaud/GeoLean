@@ -6,9 +6,9 @@ A hand-made translation of the GeoCoq library into Lean.
 GeoLean.lean somehow plays the role of the _CoqProject file.
 
 * Name changes :
-
-Sum -> SumGeoLean
-Prod -> ProdGeoLean
+nat -> Nat (native type in Lean)
+Sum -> SumGeoLean (already exists)
+Prod -> ProdGeoLea (already exists)
 
 * Undefined yet
 

@@ -13,3 +13,4 @@ import GeoLean.theories.Axioms.continuity_axioms
 import GeoLean.theories.Axioms.finish
 import GeoLean.theories.Axioms.euclidean_axioms
 import GeoLean.theories.Axioms.hilbert_axioms
+import GeoLean.theories.Coinc.Utils.arity
