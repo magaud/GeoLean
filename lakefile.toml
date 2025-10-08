@@ -1,0 +1,10 @@
+name = "GeoLean"
+version = "0.1.0"
+defaultTargets = ["geolean"]
+
+[[lean_lib]]
+name = "GeoLean"
+
+[[lean_exe]]
+name = "geolean"
+root = "Main"
