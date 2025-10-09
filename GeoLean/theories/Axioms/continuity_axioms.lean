@@ -6,7 +6,6 @@ section Continuity_Defs
 variable {Tn:Tarski_neutral_dimensionless}
 open Tarski_neutral_dimensionless
 
-
 /-- In this file, we introduce elementary continuity properties.
     These properties are different variant to assert that the intersection
     of line, segment and circles exists under some assumptions.
@@ -152,11 +151,15 @@ def greenberg_s_axiom := forall P Q R A B C:Tpoint,
   exists S, LtA P S Q A B C /\ Out Q S R
 
 end Continuity_Defs
-/- TODO
+/--
 section Completeness
 
---variable {Tn:Tarski_neutral_dimensionless}
---open Tarski_neutral_dimensionless
+class Tarski_neutral_dimensionless_n extends Tarski_neutral_dimensionless
+class Tarski_neutral_dimensionless_m extends Tarski_neutral_dimensionless
+variable {Tn:Tarski_neutral_dimensionless_n}
+variable {Tm:Tarski_neutral_dimensionless_m}
+open Tarski_neutral_dimensionless_n
+open Tarski_neutral_dimensionless_m
 
 /-- These are formalizations of Hilbert's axiom of completeness:
     "To a system of points, straight lines, and planes,
@@ -169,8 +172,9 @@ section Completeness
     because we have not defined the fact for two spaces to have the same dimension.
 -/
 
- def inj {T1 T2:Type} (f:T1->T2) := forall A B, f A = f B -> A = B
-def pres_bet {Tm: Tarski_neutral_dimensionless}
+def inj {T1 T2:Type} (f:T1->T2) := forall A B, f A = f B -> A = B
+
+def pres_bet {Tn: Tarski_neutral_dimensionless_n}{Tm: Tarski_neutral_dimensionless_m}
   (f : @Tpoint Tn -> @Tpoint Tm) := forall A B C, Bet A B C -> Bet (f A) (f B) (f C)
 
 def pres_cong {Tm: Tarski_neutral_dimensionless}
@@ -228,3 +232,4 @@ def line_completeness := forall (Tm: Tarski_neutral_dimensionless)
 
 end Completeness
 -/
+def tt := true

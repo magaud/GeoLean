@@ -20,5 +20,5 @@ Create HintDb circle.
 Create HintDb cop.
 Create HintDb cop_perm.
 
--/
+--/
 def t:= true
